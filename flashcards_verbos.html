@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flashcards Árabe – Verbos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background: #0b0f1a;
+      color: #d8e0ee;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 36px 20px 48px;
+    }
+
+    h1 {
+      font-family: 'Arial Unicode MS', 'Arial', sans-serif;
+      font-size: 46px;
+      font-weight: 700;
+      color: #6a9ddb;
+      text-align: center;
+      margin-bottom: 2px;
+      direction: rtl;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      font-weight: 300;
+      color: #283a4a;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .category-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 24px;
+      max-width: 720px;
+    }
+
+    .tab {
+      font-family: 'Lato', sans-serif;
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid #182a3a;
+      background: transparent;
+      color: #304a6a;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab:hover { border-color: #6a9ddb; color: #6a9ddb; }
+    .tab.active {
+      background: #6a9ddb;
+      color: #0b0f1a;
+      border-color: #6a9ddb;
+      font-weight: 700;
+    }
+
+    .search-wrap {
+      width: 100%;
+      max-width: 480px;
+      margin-bottom: 24px;
+    }
+
+    .search-wrap input {
+      width: 100%;
+      padding: 12px 18px;
+      border-radius: 30px;
+      border: 1px solid #182a3a;
+      background: #060810;
+      color: #d8e0ee;
+      font-size: 15px;
+      font-family: 'Lato', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-wrap input::placeholder { color: #182a3a; }
+    .search-wrap input:focus { border-color: #6a9ddb; }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-family: 'Lato', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 10px 28px;
+      border-radius: 30px;
+      border: 1px solid #182a3a;
+      background: transparent;
+      color: #d8e0ee;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.1s;
+    }
+
+    .btn:hover {
+      background: #0e1a2a;
+      border-color: #6a9ddb;
+      color: #6a9ddb;
+    }
+
+    .btn:active { transform: scale(0.97); }
+    .btn.active {
+      background: #6a9ddb;
+      color: #0b0f1a;
+      border-color: #6a9ddb;
+    }
+
+    .card-wrap {
+      width: 100%;
+      max-width: 620px;
+      height: 380px;
+      perspective: 1200px;
+      cursor: pointer;
+    }
+
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(.4,0,.2,1);
+    }
+
+    .card-inner.flipped { transform: rotateY(180deg); }
+
+    .face {
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 36px;
+      text-align: center;
+    }
+
+    .face.front {
+      background: #060810;
+      border: 1px solid #182a3a;
+    }
+
+    .face.back {
+      background: #0d1626;
+      border: 1px solid #6a9ddb;
+      transform: rotateY(180deg);
+    }
+
+    /* FRONT */
+    .category-label {
+      font-size: 11px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: #283a4a;
+      padding: 4px 14px;
+      border: 1px solid #182a3a;
+      border-radius: 20px;
+      margin-bottom: 4px;
+    }
+
+    .front-words {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .arabic-yo {
+      font-family: 'Arial Unicode MS', 'Arial', sans-serif;
+      font-size: 58px;
+      direction: rtl;
+      color: #6a9ddb;
+      line-height: 1.2;
+    }
+
+    .front-divider {
+      font-size: 13px;
+      letter-spacing: 3px;
+      color: #283a4a;
+      text-transform: uppercase;
+    }
+
+    .arabic-el {
+      font-family: 'Arial Unicode MS', 'Arial', sans-serif;
+      font-size: 42px;
+      direction: rtl;
+      color: #4a7abf;
+      line-height: 1.2;
+    }
+
+    .hint {
+      font-size: 11px;
+      color: #182a3a;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    /* BACK */
+    .back-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      width: 100%;
+    }
+
+    .back-person-label {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #283a4a;
+    }
+
+    .back-arabic-yo {
+      font-family: 'Arial Unicode MS', 'Arial', sans-serif;
+      font-size: 36px;
+      direction: rtl;
+      color: #6a9ddb;
+      line-height: 1.2;
+    }
+
+    .back-arabic-el {
+      font-family: 'Arial Unicode MS', 'Arial', sans-serif;
+      font-size: 30px;
+      direction: rtl;
+      color: #4a7abf;
+      line-height: 1.2;
+    }
+
+    .back-roman {
+      font-size: 18px;
+      font-style: italic;
+      color: #3a6aa0;
+      font-weight: 300;
+    }
+
+    .back-roman-el {
+      font-size: 16px;
+      font-style: italic;
+      color: #2a5080;
+      font-weight: 300;
+    }
+
+    .back-meaning {
+      font-size: 22px;
+      font-weight: 700;
+      color: #d8e0ee;
+    }
+
+    .back-meaning-el {
+      font-size: 17px;
+      color: #90a8c8;
+    }
+
+    .back-divider {
+      width: 50px;
+      height: 1px;
+      background: #182a3a;
+      margin: 8px 0;
+    }
+
+    .help {
+      margin-top: 20px;
+      font-size: 11px;
+      color: #182a3a;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .no-results { font-size: 16px; color: #283a4a; }
+
+    @media (max-width: 500px) {
+      .arabic-yo { font-size: 42px; }
+      .arabic-el { font-size: 30px; }
+      .card-wrap { height: 360px; }
+      h1 { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>الأفعال</h1>
+  <div class="subtitle">Flashcards · Verbos · Yo / Él</div>
+
+  <div class="category-tabs" id="tabs"></div>
+
+  <div class="search-wrap">
+    <input type="text" id="search" placeholder="Buscar: comer, ir, hablar..." oninput="filterCards()">
+  </div>
+
+  <div class="controls">
+    <button class="btn" onclick="prevCard()">⬅ Anterior</button>
+    <button class="btn" onclick="flipCard()">🔄 Girar</button>
+    <button class="btn" onclick="nextCard()">Siguiente ➡</button>
+    <button class="btn" id="randomBtn" onclick="toggleRandom()">🔀 Aleatorio: NO</button>
+    <button class="btn" onclick="shuffleCards()">⇄ Mezclar</button>
+  </div>
+
+  <div class="card-wrap" onclick="flipCard()">
+    <div class="card-inner" id="card-inner">
+      <div class="face front" id="front"></div>
+      <div class="face back" id="back"></div>
+    </div>
+  </div>
+
+  <div class="help">espacio = girar · ← → = navegar</div>
+
+  <script>
+    // yo, yoR, el, elR, meaning, cat
+    const words = [
+      // Movimiento
+      { yo: 'أَمشي',      yoR: 'amshī',      el: 'يَمشي',      elR: 'yamshī',      m: 'caminar',              cat: 'Movimiento' },
+      { yo: 'أَركُض',     yoR: 'arkuḍ',      el: 'يَركُض',     elR: 'yarkuḍ',      m: 'correr',               cat: 'Movimiento' },
+      { yo: 'أَذهَب',     yoR: 'adhhab',     el: 'يَذهَب',     elR: 'yadhhab',     m: 'ir',                   cat: 'Movimiento' },
+      { yo: 'آتي',        yoR: 'ātī',        el: 'يَأتي',      elR: 'yaʾtī',       m: 'venir',                cat: 'Movimiento' },
+      { yo: 'أَرجِع',     yoR: 'arjiʿ',      el: 'يَرجِع',     elR: 'yarjiʿ',      m: 'volver',               cat: 'Movimiento' },
+      { yo: 'أَدخُل',     yoR: 'adkhul',     el: 'يَدخُل',     elR: 'yadkhul',     m: 'entrar',               cat: 'Movimiento' },
+      { yo: 'أَخرُج',     yoR: 'akhruj',     el: 'يَخرُج',     elR: 'yakhruj',     m: 'salir',                cat: 'Movimiento' },
+      { yo: 'أَركَب',     yoR: 'arkab',      el: 'يَركَب',     elR: 'yarkab',      m: 'subir / montar',       cat: 'Movimiento' },
+
+      // Rutina diaria
+      { yo: 'أَستَيقِظ',  yoR: 'astayqiẓ',  el: 'يَستَيقِظ',  elR: 'yastayqiẓ',  m: 'despertarse',          cat: 'Rutina' },
+      { yo: 'أَستَحِمّ',  yoR: 'astaḥimm',  el: 'يَستَحِمّ',  elR: 'yastaḥimm',  m: 'ducharse',             cat: 'Rutina' },
+      { yo: 'أَغسِل',     yoR: 'aghsil',     el: 'يَغسِل',     elR: 'yaghsil',     m: 'lavar',                cat: 'Rutina' },
+      { yo: 'أَلبَس',     yoR: 'albas',      el: 'يَلبَس',     elR: 'yalbas',      m: 'ponerse / vestirse',   cat: 'Rutina' },
+      { yo: 'أُفطِر',     yoR: 'ufṭir',      el: 'يُفطِر',     elR: 'yufṭir',      m: 'desayunar',            cat: 'Rutina' },
+      { yo: 'أَنام',      yoR: 'anām',       el: 'يَنام',      elR: 'yanām',       m: 'dormir',               cat: 'Rutina' },
+      { yo: 'أَرتاح',     yoR: 'artāḥ',      el: 'يَرتاح',     elR: 'yartāḥ',      m: 'descansar',            cat: 'Rutina' },
+      { yo: 'أُرَتِّب',   yoR: 'urattib',    el: 'يُرَتِّب',   elR: 'yurattib',    m: 'ordenar',              cat: 'Rutina' },
+      { yo: 'أُنَظِّف',   yoR: 'unaẓẓif',    el: 'يُنَظِّف',   elR: 'yunaẓẓif',    m: 'limpiar',              cat: 'Rutina' },
+
+      // Alimentación
+      { yo: 'آكُل',       yoR: 'ākul',       el: 'يَأكُل',     elR: 'yaʾkul',      m: 'comer',                cat: 'Alimentación' },
+      { yo: 'أَشرَب',     yoR: 'ashrab',     el: 'يَشرَب',     elR: 'yashrab',     m: 'beber',                cat: 'Alimentación' },
+      { yo: 'أَطبُخ',     yoR: 'aṭbukh',     el: 'يَطبُخ',     elR: 'yaṭbukh',     m: 'cocinar',              cat: 'Alimentación' },
+      { yo: 'أُحَضِّر',   yoR: 'uḥaḍḍir',    el: 'يُحَضِّر',   elR: 'yuḥaḍḍir',    m: 'preparar',             cat: 'Alimentación' },
+      { yo: 'أَتَناوَل',  yoR: 'atanāwal',   el: 'يَتَناوَل',  elR: 'yatanāwal',   m: 'tomar / consumir',     cat: 'Alimentación' },
+      { yo: 'أَشتَري',    yoR: 'ashtarī',    el: 'يَشتَري',    elR: 'yashtarī',    m: 'comprar',              cat: 'Alimentación' },
+
+      // Comunicación
+      { yo: 'أَتَكَلَّم', yoR: 'atakallam',  el: 'يَتَكَلَّم', elR: 'yatakallam',  m: 'hablar',               cat: 'Comunicación' },
+      { yo: 'أَقول',      yoR: 'aqūl',       el: 'يَقول',      elR: 'yaqūl',       m: 'decir',                cat: 'Comunicación' },
+      { yo: 'أَسأَل',     yoR: 'asʾal',      el: 'يَسأَل',     elR: 'yasʾal',      m: 'preguntar',            cat: 'Comunicación' },
+      { yo: 'أُجيب',      yoR: 'ujīb',       el: 'يُجيب',      elR: 'yujīb',       m: 'responder',            cat: 'Comunicación' },
+      { yo: 'أَسمَع',     yoR: 'asmaʿ',      el: 'يَسمَع',     elR: 'yasmaʿ',      m: 'oír / escuchar',       cat: 'Comunicación' },
+      { yo: 'أَكتُب',     yoR: 'aktub',      el: 'يَكتُب',     elR: 'yaktub',      m: 'escribir',             cat: 'Comunicación' },
+      { yo: 'أَقرَأ',     yoR: 'aqraʾ',      el: 'يَقرَأ',     elR: 'yaqraʾ',      m: 'leer',                 cat: 'Comunicación' },
+
+      // Percepción y mente
+      { yo: 'أَرى',       yoR: 'arā',        el: 'يَرى',       elR: 'yarā',        m: 'ver',                  cat: 'Mente' },
+      { yo: 'أَنظُر',     yoR: 'anẓur',      el: 'يَنظُر',     elR: 'yanẓur',      m: 'mirar',                cat: 'Mente' },
+      { yo: 'أُشاهِد',    yoR: 'ushāhid',    el: 'يُشاهِد',    elR: 'yushāhid',    m: 'ver / mirar algo',     cat: 'Mente' },
+      { yo: 'أُفَكِّر',   yoR: 'ufakkir',    el: 'يُفَكِّر',   elR: 'yufakkir',    m: 'pensar',               cat: 'Mente' },
+      { yo: 'أَفهَم',     yoR: 'afham',      el: 'يَفهَم',     elR: 'yafham',      m: 'entender',             cat: 'Mente' },
+      { yo: 'أَعرِف',     yoR: 'aʿrif',      el: 'يَعرِف',     elR: 'yaʿrif',      m: 'saber / conocer',      cat: 'Mente' },
+      { yo: 'أَشعُر',     yoR: 'ashʿur',     el: 'يَشعُر',     elR: 'yashʿur',     m: 'sentir',               cat: 'Mente' },
+      { yo: 'أَتَعَلَّم', yoR: 'ataʿallam',  el: 'يَتَعَلَّم', elR: 'yataʿallam',  m: 'aprender',             cat: 'Mente' },
+      { yo: 'أَبحَث',     yoR: 'abḥath',     el: 'يَبحَث',     elR: 'yabḥath',     m: 'buscar / investigar',  cat: 'Mente' },
+
+      // Deseos y actitud
+      { yo: 'أُريد',      yoR: 'urīd',       el: 'يُريد',      elR: 'yurīd',       m: 'querer',               cat: 'Deseos' },
+      { yo: 'أُحِبّ',     yoR: 'uḥibb',      el: 'يُحِبّ',     elR: 'yuḥibb',      m: 'querer / amar / gustar', cat: 'Deseos' },
+      { yo: 'أُفَضِّل',   yoR: 'ufaḍḍil',    el: 'يُفَضِّل',   elR: 'yufaḍḍil',    m: 'preferir',             cat: 'Deseos' },
+      { yo: 'أَستَطيع',   yoR: 'astaṭīʿ',    el: 'يَستَطيع',   elR: 'yastaṭīʿ',    m: 'poder',                cat: 'Deseos' },
+      { yo: 'أُحاوِل',    yoR: 'uḥāwil',     el: 'يُحاوِل',    elR: 'yuḥāwil',     m: 'intentar',             cat: 'Deseos' },
+      { yo: 'أَحتاج',     yoR: 'aḥtāj',      el: 'يَحتاج',     elR: 'yaḥtāj',      m: 'necesitar',            cat: 'Deseos' },
+      { yo: 'أَنتَظِر',   yoR: 'antaẓir',    el: 'يَنتَظِر',   elR: 'yantaẓir',    m: 'esperar',              cat: 'Deseos' },
+
+      // Verbos esenciales
+      { yo: 'أَكون',      yoR: 'akūn',       el: 'يَكون',      elR: 'yakūn',       m: 'ser / estar',          cat: 'Esenciales' },
+      { yo: 'عِندي',      yoR: 'ʿindī',      el: 'عِندَهُ',    elR: 'ʿindahu',     m: 'tener',                cat: 'Esenciales' },
+      { yo: 'أُعطي',      yoR: 'uʿṭī',       el: 'يُعطي',      elR: 'yuʿṭī',       m: 'dar',                  cat: 'Esenciales' },
+      { yo: 'آخُذ',       yoR: 'ākhudh',     el: 'يَأخُذ',     elR: 'yaʾkhudh',    m: 'tomar / coger',        cat: 'Esenciales' },
+      { yo: 'أَجِد',      yoR: 'ajid',       el: 'يَجِد',      elR: 'yajid',       m: 'encontrar',            cat: 'Esenciales' },
+      { yo: 'أَجلِس',     yoR: 'ajlis',      el: 'يَجلِس',     elR: 'yajlis',      m: 'sentarse',             cat: 'Esenciales' },
+      { yo: 'أَعيش',      yoR: 'aʿīsh',      el: 'يَعيش',      elR: 'yaʿīsh',      m: 'vivir',                cat: 'Esenciales' },
+      { yo: 'أَبدأ',      yoR: 'abdaʾ',      el: 'يَبدأ',      elR: 'yabdaʾ',      m: 'empezar',              cat: 'Esenciales' },
+      { yo: 'أُنهي',      yoR: 'unhī',       el: 'يُنهي',      elR: 'yunhī',       m: 'terminar',             cat: 'Esenciales' },
+
+      // Ocio y trabajo
+      { yo: 'أَلعَب',     yoR: 'alʿab',      el: 'يَلعَب',     elR: 'yalʿab',      m: 'jugar',                cat: 'Ocio' },
+      { yo: 'أَعمَل',     yoR: 'aʿmal',      el: 'يَعمَل',     elR: 'yaʿmal',      m: 'trabajar',             cat: 'Ocio' },
+      { yo: 'أَدرُس',     yoR: 'adrus',      el: 'يَدرُس',     elR: 'yadrus',      m: 'estudiar',             cat: 'Ocio' },
+      { yo: 'أُمارِس',    yoR: 'umāris',     el: 'يُمارِس',    elR: 'yumāris',     m: 'practicar',            cat: 'Ocio' },
+      { yo: 'أُشاهِد',    yoR: 'ushāhid',    el: 'يُشاهِد',    elR: 'yushāhid',    m: 'ver (TV, vídeo…)',      cat: 'Ocio' },
+    ];
+
+    const categories = ['Todas', ...new Set(words.map(w => w.cat))];
+    let activeCategory = 'Todas';
+
+    const tabsEl = document.getElementById('tabs');
+    categories.forEach(cat => {
+      const btn = document.createElement('button');
+      btn.className = 'tab' + (cat === 'Todas' ? ' active' : '');
+      btn.textContent = cat;
+      btn.onclick = () => selectCategory(cat);
+      tabsEl.appendChild(btn);
+    });
+
+    function selectCategory(cat) {
+      activeCategory = cat;
+      document.querySelectorAll('.tab').forEach(t => {
+        t.classList.toggle('active', t.textContent === cat);
+      });
+      document.getElementById('search').value = '';
+      applyFilter();
+    }
+
+    let filteredCards = [];
+    let current = 0;
+    let randomMode = false;
+
+    function applyFilter() {
+      const query = document.getElementById('search').value.toLowerCase();
+      filteredCards = words.filter(w => {
+        const matchCat = activeCategory === 'Todas' || w.cat === activeCategory;
+        const matchSearch = !query ||
+          w.m.toLowerCase().includes(query) ||
+          w.yo.includes(query) ||
+          w.el.includes(query) ||
+          w.yoR.toLowerCase().includes(query) ||
+          w.elR.toLowerCase().includes(query);
+        return matchCat && matchSearch;
+      });
+      current = 0;
+      renderCard();
+    }
+
+    function filterCards() { applyFilter(); }
+
+    function renderCard() {
+      const frontEl = document.getElementById('front');
+      const backEl  = document.getElementById('back');
+      document.getElementById('card-inner').classList.remove('flipped');
+
+      if (!filteredCards.length) {
+        frontEl.innerHTML = '<div class="no-results">Sin resultados</div>';
+        backEl.innerHTML = '';
+        document.getElementById('counter').textContent = '0 / 0';
+        return;
+      }
+
+      const w = filteredCards[current];
+      document.getElementById('counter').textContent = `${current + 1} / ${filteredCards.length}`;
+
+      frontEl.innerHTML = `
+        <div class="category-label">${w.cat}</div>
+        <div class="front-words">
+          <div class="arabic-yo">${w.yo}</div>
+          <div class="front-divider">· · ·</div>
+          <div class="arabic-el">${w.el}</div>
+        </div>
+        <div class="hint">toca para ver la respuesta</div>
+      `;
+
+      backEl.innerHTML = `
+        <div class="back-section">
+          <div class="back-person-label">yo — أَنا</div>
+          <div class="back-arabic-yo">${w.yo}</div>
+          <div class="back-roman">${w.yoR}</div>
+          <div class="back-meaning">${w.m}</div>
+        </div>
+        <div class="back-divider"></div>
+        <div class="back-section">
+          <div class="back-person-label">él — هو</div>
+          <div class="back-arabic-el">${w.el}</div>
+          <div class="back-roman-el">${w.elR}</div>
+          <div class="back-meaning-el">${w.m}</div>
+        </div>
+      `;
+    }
+
+    function flipCard() {
+      document.getElementById('card-inner').classList.toggle('flipped');
+    }
+
+    function nextCard() {
+      if (!filteredCards.length) return;
+      current = randomMode
+        ? Math.floor(Math.random() * filteredCards.length)
+        : (current + 1) % filteredCards.length;
+      renderCard();
+    }
+
+    function prevCard() {
+      if (!filteredCards.length) return;
+      current = randomMode
+        ? Math.floor(Math.random() * filteredCards.length)
+        : (current - 1 + filteredCards.length) % filteredCards.length;
+      renderCard();
+    }
+
+    function shuffleCards() {
+      for (let i = filteredCards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [filteredCards[i], filteredCards[j]] = [filteredCards[j], filteredCards[i]];
+      }
+      current = 0;
+      renderCard();
+    }
+
+    function toggleRandom() {
+      randomMode = !randomMode;
+      const btn = document.getElementById('randomBtn');
+      btn.textContent = `🔀 Aleatorio: ${randomMode ? 'SÍ' : 'NO'}`;
+      btn.classList.toggle('active', randomMode);
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.code === 'Space') { e.preventDefault(); flipCard(); }
+      if (e.key === 'ArrowRight') nextCard();
+      if (e.key === 'ArrowLeft') prevCard();
+    });
+
+    // Counter element
+    const counterEl = document.createElement('div');
+    counterEl.id = 'counter';
+    counterEl.style.cssText = 'font-size:12px;letter-spacing:2px;color:#283a4a;text-align:center;margin-bottom:10px;';
+    document.querySelector('.card-wrap').insertAdjacentElement('beforebegin', counterEl);
+
+    applyFilter();
+  </script>
+
+</body>
+</html>
